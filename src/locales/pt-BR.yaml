@@ -1,0 +1,48 @@
+layout:
+  header:
+    logoAlt: Logo do CargasAqui
+    editProfile: Editar perfil
+  drawer:
+    companies: Empresas
+login:
+  title: Entre em sua conta
+  fields:
+    email:
+      label: E-mail
+    password:
+      label: Senha
+  submit: Entrar
+  forgotPassword: Esqueceu sua senha?
+profile:
+  title: 'Perfil'
+  fields:
+    email:
+      label: E-mail
+    name:
+      label: Nome
+    newPassword:
+      label: Nova senha
+      notice: Deixe em branco para não alterar a senha.
+      strengthNotice: A senha precisa ter pelo menos 6 caracteres e 2 das seguintes
+    newPasswordConfirmation:
+      label: Confirme a nova senha
+    currentPassword:
+      label: Senha atual
+      notice: Só é necessário se você deseja alterar a sua senha.
+  submit: 'Salvar'
+  saved: 'Salvo com sucesso'
+validation:
+  email: Informe um e-mail válido
+  defaultRequired: Esse campo é obrigatório
+  passwordConfirmation: As senhas não conferem
+misc:
+  login: Entrar
+  logout: Sair
+errors:
+  unknown: 'Erro desconhecido'
+  firebase:
+    'auth/user-not-found': 'Usuário não encontrado.'
+    'auth/wrong-password': 'Senha incorreta.'
+    'auth/too-many-requests': 'Muitas requisições. Tente novamente mais tarde.'
+    'auth/network-request-failed': 'Falha na rede. Tente novamente mais tarde.'
+  newPasswordSameAsOld: A nova senha deve ser diferente da antiga.
