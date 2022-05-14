@@ -36,13 +36,9 @@
 
           <hr class="q-my-md" />
 
-          <password-input
+          <password-input-with-meter
             :label="t('profile.fields.newPassword.label')"
-            :hint="
-              password?.length
-                ? t('profile.fields.newPassword.strengthNotice')
-                : t('profile.fields.newPassword.notice')
-            "
+            :hint="t('profile.fields.newPassword.notice')"
             class="q-mb-sm"
             v-model="password"
           />
@@ -100,6 +96,7 @@ import {
 import { useAuthStore } from 'src/stores/auth';
 
 import PasswordInput from 'components/misc/PasswordInput.vue';
+import PasswordInputWithMeter from 'components/misc/PasswordInputWithMeter.vue';
 import { watch } from 'vue';
 import { useFeedback, useOnlyAuthed } from 'src/composables';
 
@@ -132,7 +129,12 @@ function onSubmit() {
   const promises = [];
 
   if (displayName !== user.displayName) {
-    promises.push(updateProfile(user, { displayName }));
+    promises.push(
+      updateProfile(user, { displayName }).catch((e) => {
+        console.error('foi aqui', e);
+        throw e;
+      })
+    );
   }
 
   if (password) {
@@ -157,12 +159,14 @@ function onSubmit() {
   Loading.show();
   return Promise.all(promises)
     .then(() => {
-      clearPasswords();
       notifySuccess(t('profile.saved'));
       if (wasPasswordChanged) user = null;
     })
     .catch(handleFirebaseError)
-    .finally(() => Loading.hide());
+    .finally(() => {
+      clearPasswords();
+      Loading.hide();
+    });
 }
 
 watch(

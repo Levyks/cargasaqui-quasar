@@ -1,5 +1,11 @@
 import { ValidationRule } from 'quasar';
 import { Composer } from 'vue-i18n';
+import {
+  passwordStrength,
+  defaultOptions,
+  Options,
+  Result,
+} from 'check-password-strength';
 
 export function createDefaultRequiredRule(t: Composer['t']): ValidationRule {
   return (val: string) =>
@@ -19,3 +25,49 @@ export function createPasswordConfirmationRule(
   return (val: string) =>
     val === password || t('validation.passwordConfirmation');
 }
+
+/** <Password Strength> */
+const options: Options<string> = [
+  {
+    minDiversity: 0,
+    minLength: 0,
+  },
+  {
+    minDiversity: 2,
+    minLength: 6,
+  },
+  {
+    minDiversity: 3,
+    minLength: 8,
+  },
+  {
+    minDiversity: 4,
+    minLength: 10,
+  },
+].map((option, idx) => ({
+  ...defaultOptions[idx],
+  ...option,
+})) as Options<string>;
+
+export type PasswordStrength = Result<string>;
+export function getPasswordStrength(password: string): PasswordStrength {
+  return passwordStrength(password, options);
+}
+
+export function createPasswordStrengthRule(
+  t: Composer['t'],
+  minStrength = 1
+): ValidationRule {
+  return (val: string) => {
+    const option = options[minStrength];
+    const strength = getPasswordStrength(val);
+    return (
+      strength.id >= minStrength ||
+      t('validation.passwordStrength.requires', [
+        option.minLength,
+        option.minDiversity,
+      ])
+    );
+  };
+}
+/** </Password Strength> */

@@ -35,6 +35,19 @@ validation:
   email: Informe um e-mail válido
   defaultRequired: Esse campo é obrigatório
   passwordConfirmation: As senhas não conferem
+  passwordStrength:
+    label: Força da senha
+    requires: A senha precisa ter pelo menos {0} caracteres e {1} das seguintes
+    levels:
+      tooWeak: Fraca demais
+      weak: Fraca
+      medium: Média
+      strong: Forte
+    contains:
+      lowercase: Letras minúsculas
+      uppercase: Letras maiúsculas
+      number: Números
+      symbol: Caracteres especiais
 misc:
   login: Entrar
   logout: Sair

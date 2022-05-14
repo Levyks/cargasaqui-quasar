@@ -19,6 +19,7 @@
         class="cursor-pointer"
       />
     </template>
+    <slot></slot>
   </q-input>
 </template>
 
