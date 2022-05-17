@@ -7,13 +7,13 @@
     <q-list>
       <q-item clickable v-close-popup :to="routes.profile.path">
         <q-item-section>
-          <q-item-label>{{ t('layout.header.editProfile') }}</q-item-label>
+          <q-item-label>{{ $t('layout.header.editProfile') }}</q-item-label>
         </q-item-section>
       </q-item>
 
       <q-item clickable v-close-popup @click="onLogout">
         <q-item-section>
-          <q-item-label>{{ t('misc.logout') }}</q-item-label>
+          <q-item-label>{{ $t('misc.logout') }}</q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
@@ -21,17 +21,14 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { Loading } from 'quasar';
 
-import { useAuthStore } from 'src/stores/auth';
-import { routes } from 'src/router/routes';
+import { useAuthStore } from 'stores/auth';
+import { routes } from 'router/routes';
 import { getAuth, signOut } from '@firebase/auth';
-import { useFeedback } from 'src/composables';
-
-const { t } = useI18n();
+import { useFeedback } from 'composables';
 
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);

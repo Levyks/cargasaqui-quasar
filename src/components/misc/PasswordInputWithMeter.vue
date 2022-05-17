@@ -1,16 +1,16 @@
 <template>
   <div>
-    <password-input
+    <PasswordInput
       :name="name"
       :label="label"
       :hint="hint"
       :modelValue="password"
       @update:modelValue="emit('update:modelValue', $event as string)"
       :allowShowPassword="allowShowPassword"
-      :rules="[createPasswordStrengthRule(t, minStrength)]"
+      :rules="[createPasswordStrengthRule($t, minStrength)]"
       :required="required"
     />
-    <password-strength-meter
+    <PasswordStrengthMeter
       v-if="alwaysShowMeter || password"
       :password="password"
     />
@@ -18,14 +18,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-
-import { createPasswordStrengthRule } from 'src/services/validation';
+import { createPasswordStrengthRule } from 'services/validation';
 
 import PasswordInput from './PasswordInput.vue';
 import PasswordStrengthMeter from './PasswordStrengthMeter.vue';
-
-const { t } = useI18n();
 
 const {
   label,

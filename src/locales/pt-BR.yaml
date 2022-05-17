@@ -31,6 +31,25 @@ profile:
       notice: Só é necessário se você deseja alterar a sua senha.
   submit: 'Salvar'
   saved: 'Salvo com sucesso'
+cargoes:
+  title: Cargas
+  columns:
+    route: 'Rota'
+    state: 'UF'
+    numberOfDeliveries: 'Entregas'
+    weightInKg: 'Peso'
+    payment: 'Frete'
+    advancePayment: 'Adiantamento'
+    status: 'Status'
+    driverName: 'Motorista'
+    driverPhone: 'Telefone Motorista'
+    note: 'Observação'
+  modal:
+    editTitle: 'Editar carga'
+    createTitle: 'Criar carga'
+  delete:
+    title: 'Excluir carga'
+    message: 'Tem certeza que deseja excluir a carga "{route}"?'
 validation:
   email: Informe um e-mail válido
   defaultRequired: Esse campo é obrigatório
@@ -48,9 +67,21 @@ validation:
       uppercase: Letras maiúsculas
       number: Números
       symbol: Caracteres especiais
+companies:
+  logoAlt: Logo da empresa "{0}"
+notFound:
+  title: 'Página não encontrada'
+  description: 'Não conseguimos encontrar a página que você procura.'
+  goHome: 'Voltar para a página inicial'
 misc:
   login: Entrar
   logout: Sair
+  page: Página {0}
+  search: Buscar
+  edit: Editar
+  delete: Excluir
+  create: Criar
+  cancel: Cancelar
 errors:
   unknown: 'Erro desconhecido'
   firebase:

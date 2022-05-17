@@ -3,7 +3,7 @@
     :modelValue="password"
     @update:modelValue="emit('update:modelValue', $event as string)"
     :name="name"
-    :label="label || t('login.fields.password.label')"
+    :label="label || $t('login.fields.password.label')"
     :type="showPassword ? 'text' : 'password'"
     :hint="hint"
     lazy-rules
@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { ValidationRule } from 'quasar';
-import { createDefaultRequiredRule } from 'src/services/validation';
+import { createDefaultRequiredRule } from 'services/validation';
 import { computed } from 'vue';
 
 const { t } = useI18n();

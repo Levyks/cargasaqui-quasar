@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { DiversityType } from 'check-password-strength';
-import { getPasswordStrength, PasswordStrength } from 'src/services/validation';
+import { getPasswordStrength, PasswordStrength } from 'services/validation';
 
 import { useI18n } from 'vue-i18n';
 
@@ -97,11 +97,9 @@ const contains = $computed<
   flex-wrap: wrap;
   max-height: 80px;
 
-  &::v-deep {
-    .disabled,
-    .disabled * {
-      cursor: default !important;
-    }
+  &:deep(.disabled),
+  &:deep(.disabled *) {
+    cursor: default !important;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
-import { CustomRouteRecordDict } from 'src/typings/router';
+import { CustomRouteRecordDict } from 'typings/router';
 
 function formatRoutesToChildren(
   routesDict: CustomRouteRecordDict
@@ -13,7 +13,7 @@ function formatRoutesToChildren(
 export const routes = {
   home: {
     path: '/',
-    component: () => import('pages/IndexPage.vue'),
+    redirect: '/companies',
   },
   companies: {
     path: '/companies',

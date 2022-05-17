@@ -20,7 +20,7 @@
               <q-icon name="email" />
             </template>
           </q-input>
-          <password-input class="q-mb-sm" v-model="password" required />
+          <PasswordInput class="q-mb-sm" v-model="password" required />
         </q-card-section>
 
         <q-card-actions class="q-px-lg">
@@ -55,11 +55,11 @@ import { getAuth, signInWithEmailAndPassword } from '@firebase/auth';
 import {
   createDefaultRequiredRule,
   createEmailRule,
-} from 'src/services/validation';
+} from 'services/validation';
 
-import { routes } from 'src/router/routes';
-import { useAuthStore } from 'src/stores/auth';
-import { useFeedback } from 'src/composables';
+import { routes } from 'router/routes';
+import { useAuthStore } from 'stores/auth';
+import { useFeedback } from 'composables';
 
 import PasswordInput from 'components/misc/PasswordInput.vue';
 

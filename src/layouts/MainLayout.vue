@@ -26,7 +26,7 @@
           class="self-stretch"
           flat
           :label="t('misc.login')"
-          :to="loginUrl"
+          :to="loginPath"
           :disable="route.name === 'login'"
           v-else
         />
@@ -54,16 +54,19 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
-import logo from 'src/assets/img/logo_full_white.png';
+import logo from 'assets/img/logo_full_white.png';
 
-import { routes } from 'src/router/routes';
-import { useAuthStore } from 'src/stores/auth';
+import { routes } from 'router/routes';
+import { useAuthStore } from 'stores/auth';
 
-import LoggedInDropdown from 'src/components/layout/LoggedInDropdown.vue';
-import { useRoute } from 'vue-router';
+import LoggedInDropdown from 'components/layout/LoggedInDropdown.vue';
+
+import LoadingPage from 'pages/LoadingPage.vue';
 
 const { t } = useI18n();
 const leftDrawerOpen = ref(false);
@@ -81,11 +84,10 @@ const links = computed(() => [
   },
 ]);
 
-const loginUrl = computed(() => {
-  const url = new URL(routes.login.path, window.location.origin);
-  url.searchParams.set('goto', route.path);
-
-  return url.href;
+const loginPath = computed(() => {
+  const search = new URLSearchParams();
+  search.set('goto', route.path);
+  return routes.login.path + '?' + search.toString();
 });
 </script>
 

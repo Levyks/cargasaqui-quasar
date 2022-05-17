@@ -1,11 +1,12 @@
-import { useQuasar } from 'quasar';
+import { QTableColumn, useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import { FirebaseError } from 'firebase/app';
-import { getFirebaseErrorTranslationKey } from 'src/services/i18n';
-import { useAuthStore } from 'src/stores/auth';
-import { watch } from 'vue';
+import { getFirebaseErrorTranslationKey } from 'services/i18n';
+import { useAuthStore } from 'stores/auth';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { routes } from 'src/router/routes';
+import { routes } from 'router/routes';
+import { QueryDocumentSnapshot } from 'firebase/firestore';
 
 export function useFeedback() {
   const i18n = useI18n();
@@ -49,4 +50,18 @@ export function useOnlyAuthed() {
       immediate: true,
     }
   );
+}
+
+interface Column<T> extends QTableColumn {
+  field: string | ((row: QueryDocumentSnapshot<T>) => string | number);
+}
+
+export function useColumns<T>(columnsCb: () => Column<T>[]) {
+  return computed(columnsCb);
+}
+
+export function useVirtualScrollPagination() {
+  return ref({
+    rowsPerPage: 0,
+  });
 }

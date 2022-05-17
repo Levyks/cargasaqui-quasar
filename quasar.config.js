@@ -76,6 +76,13 @@ module.exports = configure(function (/* ctx */) {
       },
 
       vitePlugins: [['@rollup/plugin-yaml']],
+
+      alias: {
+        composables: path.join(__dirname, 'src/composables'),
+        services: path.join(__dirname, 'src/services'),
+        models: path.join(__dirname, 'src/models'),
+        router: path.join(__dirname, 'src/router'),
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
@@ -109,7 +116,7 @@ module.exports = configure(function (/* ctx */) {
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
     // sourceFiles: {
     //   rootComponent: 'src/App.vue',
-    //   router: 'src/router/index',
+    //   router: 'router/index',
     //   store: 'src/store/index',
     //   registerServiceWorker: 'src-pwa/register-service-worker',
     //   serviceWorker: 'src-pwa/custom-service-worker',

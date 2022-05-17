@@ -36,7 +36,7 @@
 
           <hr class="q-my-md" />
 
-          <password-input-with-meter
+          <PasswordInputWithMeter
             :label="t('profile.fields.newPassword.label')"
             :hint="t('profile.fields.newPassword.notice')"
             class="q-mb-sm"
@@ -44,7 +44,7 @@
           />
 
           <template v-if="password">
-            <password-input
+            <PasswordInput
               :label="t('profile.fields.newPasswordConfirmation.label')"
               class="q-mb-sm"
               v-model="passwordConfirm"
@@ -52,7 +52,7 @@
               :required="!!password"
             />
 
-            <password-input
+            <PasswordInput
               :label="t('profile.fields.currentPassword.label')"
               class="q-mb-sm"
               v-model="currentPassword"
@@ -91,14 +91,14 @@ import {
 import {
   createDefaultRequiredRule,
   createPasswordConfirmationRule,
-} from 'src/services/validation';
+} from 'services/validation';
 
-import { useAuthStore } from 'src/stores/auth';
+import { useAuthStore } from 'stores/auth';
 
 import PasswordInput from 'components/misc/PasswordInput.vue';
 import PasswordInputWithMeter from 'components/misc/PasswordInputWithMeter.vue';
 import { watch } from 'vue';
-import { useFeedback, useOnlyAuthed } from 'src/composables';
+import { useFeedback, useOnlyAuthed } from 'composables';
 
 useOnlyAuthed();
 const i18n = useI18n();

@@ -1,9 +1,10 @@
 import { boot } from 'quasar/wrappers';
 import { createI18n, I18n, Locale } from 'vue-i18n';
-import { Loading } from 'quasar';
+import { Quasar, Loading } from 'quasar';
 
 import locales from 'src/locales';
-import { useI18nStore } from 'src/stores/i18n';
+
+const quasarLangs = import.meta.glob('../../node_modules/quasar/lang/*.mjs');
 
 function getValidLocale(
   locale = navigator.language,
@@ -29,16 +30,23 @@ function loadLocale(
   i18n: I18n<unknown, unknown, unknown, true>,
   locale: Locale
 ): Promise<void> {
-  const store = useI18nStore();
-
-  store.loadingLocale = true;
   Loading.show();
 
   return locales[locale]().then((module) => {
     i18n.global.setLocaleMessage(locale, module.default);
 
-    store.loadingLocale = false;
     Loading.hide();
+  });
+}
+
+function setQuasarLang(locale: Locale) {
+  const path = `../../node_modules/quasar/lang/${locale}.mjs`;
+  if (!quasarLangs[path]) return;
+
+  const importLang = quasarLangs[path];
+
+  return importLang().then((module) => {
+    Quasar.lang.set(module.default);
   });
 }
 
@@ -51,4 +59,5 @@ export default boot(({ app }) => {
   app.use(i18n);
 
   loadLocale(i18n, locale);
+  setQuasarLang(locale);
 });

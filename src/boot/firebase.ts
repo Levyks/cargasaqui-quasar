@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { useAuthStore } from 'src/stores/auth';
+import { useAuthStore } from 'stores/auth';
 
 export default () => {
   self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.DEV;
@@ -27,9 +27,5 @@ export default () => {
   const auth = getAuth(app);
   const authStore = useAuthStore();
 
-  onAuthStateChanged(auth, (userAuth) => {
-    authStore.user = userAuth;
-    authStore.checked = true;
-    console.log('AuthStateChanged -> ', authStore.user);
-  });
+  onAuthStateChanged(auth, authStore.setUser);
 };

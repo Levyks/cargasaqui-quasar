@@ -10,7 +10,14 @@
       "pages/*": ["src/pages/*"],
       "assets/*": ["src/assets/*"],
       "boot/*": ["src/boot/*"],
-      "stores/*": ["src/stores/*"]
+      "stores/*": ["src/stores/*"],
+      "composables/*": ["src/composables/*"],
+      "composables": ["src/composables"],
+      "services/*": ["src/services/*"],
+      "models/*": ["src/models/*"],
+      "models": ["src/models"],
+      "router/*": ["src/router/*"],
+      "typings/*": ["src/typings/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
