@@ -34,7 +34,7 @@ export function useFirestoreCollection<T>(
 export function useCargoPrivate(cargo: QueryDocumentSnapshot<Cargo>) {
   const snap = ref<QueryDocumentSnapshot<CargoPrivate> | undefined>();
   const data = computed(() => snap.value?.data());
-  const loading = computed(() => !data.value);
+  const loading = ref<boolean>(true);
   const error = ref<FirestoreError | undefined>();
 
   let unsub: Unsubscribe | undefined;
@@ -50,8 +50,16 @@ export function useCargoPrivate(cargo: QueryDocumentSnapshot<Cargo>) {
 
       unsub = onSnapshot(
         doc(db.cargoPrivate(cargo.ref), 'extra'),
-        (s) => (snap.value = s.exists() ? s : undefined),
-        (e) => (error.value = e)
+        (s) => {
+          error.value = undefined;
+          snap.value = s.exists() ? s : undefined;
+          loading.value = false;
+        },
+        (e) => {
+          error.value = e;
+          snap.value = undefined;
+          loading.value = false;
+        }
       );
     },
     {

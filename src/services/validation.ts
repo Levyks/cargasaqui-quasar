@@ -8,8 +8,7 @@ import {
 } from 'check-password-strength';
 
 export function createDefaultRequiredRule(t: Composer['t']): ValidationRule {
-  return (val: string) =>
-    (val && val.length > 0) || t('validation.defaultRequired');
+  return (val: string) => (val ? true : t('validation.defaultRequired'));
 }
 
 export function createEmailRule(t: Composer['t']): ValidationRule {

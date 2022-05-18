@@ -3,9 +3,7 @@
     :modelValue="modelValue"
     @update:modelValue="emit('update:modelValue', $event as boolean)"
   >
-    <LoadingCard
-      v-if="(cargo && !cargoPrivate) || !statusesMap || !statesMap"
-    />
+    <LoadingCard v-if="!statusesMap || !statesMap" />
     <q-card v-else style="width: 800px; max-width: 100%">
       <q-form ref="form" @submit="onSubmit">
         <q-card-section>
@@ -40,6 +38,8 @@
               option-value="id"
               :option-label="getStateSelectLabel"
               :disable="loadingSubmit"
+              lazy-rules
+              :rules="[createDefaultRequiredRule($t)]"
               emit-value
             />
             <q-select
@@ -53,12 +53,15 @@
               option-value="id"
               :option-label="getStatusSelectLabel"
               :disable="loadingSubmit"
+              lazy-rules
+              :rules="[createDefaultRequiredRule($t)]"
               emit-value
             />
             <q-input
               v-model="numberOfDeliveries"
               :label="$t('cargoes.columns.numberOfDeliveries')"
               type="number"
+              min="0"
               class="q-mb-sm"
               lazy-rules
               :rules="[createDefaultRequiredRule($t)]"
@@ -68,6 +71,7 @@
               v-model="weightInKg"
               :label="$t('cargoes.columns.weightInKg')"
               type="number"
+              min="0"
               class="q-mb-sm"
               lazy-rules
               :rules="[createDefaultRequiredRule($t)]"
@@ -79,6 +83,7 @@
               v-model="payment"
               :label="$t('cargoes.columns.payment')"
               type="number"
+              min="0"
               class="q-mb-sm"
               lazy-rules
               :rules="[createDefaultRequiredRule($t)]"
@@ -88,6 +93,7 @@
               v-model="advancePayment"
               :label="$t('cargoes.columns.advancePayment')"
               type="number"
+              min="0"
               class="q-mb-sm"
               lazy-rules
               :rules="[createDefaultRequiredRule($t)]"
@@ -104,6 +110,7 @@
               v-model="driverPhone"
               :label="$t('cargoes.columns.driverPhone')"
               type="text"
+              mask="(##) #####-####"
               class="q-mb-sm"
               :disable="loadingSubmit"
             />
@@ -158,7 +165,6 @@ import { createDefaultRequiredRule } from 'services/validation';
 import LoadingCard from 'components/misc/LoadingCard.vue';
 import { db } from 'services/firebase/db';
 import { useFeedback } from 'composables';
-import { FirebaseError } from '@firebase/util';
 
 const { modelValue, cargo, cargoPrivate } = defineProps<{
   modelValue: boolean;
@@ -224,6 +230,7 @@ function getStatusSelectLabel(status: QueryDocumentSnapshot<Status>) {
 
 watch(
   [$$(modelValue), $$(cargo)],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ([_, c]) => {
     if (!c) return resetPublicFields();
     const data = c.data();
@@ -238,6 +245,7 @@ watch(
 
 watch(
   [$$(modelValue), $$(cargoPrivate)],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ([_, cp]) => {
     if (!cp) return resetPrivateFields();
     const data = cp.data();
@@ -270,52 +278,41 @@ async function onSubmit() {
   const cargoPrivateDocData = {
     payment: Number(payment),
     advancePayment: Number(advancePayment),
-    driverName: driverName as string,
-    driverPhone: driverPhone as string,
-    note: note as string,
+    driverName: (driverName as string) || '',
+    driverPhone: (driverPhone as string) || '',
+    note: (note as string) || '',
   };
 
-  let cargoRef = cargo?.ref;
-
-  try {
-    if (cargo) {
-      await updateDoc(cargo.ref, {
+  const cargoPromise = cargo
+    ? updateDoc(cargo.ref, {
         ...cargoDocData,
         updatedAt: serverTimestamp(),
-      });
-    } else {
-      const addResult = await addDoc(
-        db.companyCargoes(companyStore.company!.id),
-        {
-          ...cargoDocData,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        }
-      );
-      cargoRef = addResult;
-    }
-
-    if (cargoPrivate) {
-      await updateDoc(cargoPrivate.ref, {
-        ...cargoPrivateDocData,
-        updatedAt: serverTimestamp(),
-      });
-    } else {
-      if (!cargoRef) throw new Error('cargoRef is undefined');
-      await setDoc(doc(db.cargoPrivate(cargoRef), 'extra'), {
-        ...cargoPrivateDocData,
+      }).then(() => cargo.ref)
+    : addDoc(db.companyCargoes(companyStore.company!.id), {
+        ...cargoDocData,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-    }
 
-    emit('update:modelValue', false);
-  } catch (e) {
-    handleFirebaseError(e as FirebaseError);
-  } finally {
-    resetAllFields();
-    loadingSubmit = false;
-    Loading.hide();
-  }
+  cargoPromise
+    .then((cargoRef) => {
+      return cargoPrivate
+        ? updateDoc(cargoPrivate.ref, {
+            ...cargoPrivateDocData,
+            updatedAt: serverTimestamp(),
+          })
+        : setDoc(doc(db.cargoPrivate(cargoRef), 'extra'), {
+            ...cargoPrivateDocData,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          });
+    })
+    .then(() => emit('update:modelValue', false))
+    .catch(handleFirebaseError)
+    .finally(() => {
+      resetAllFields();
+      loadingSubmit = false;
+      Loading.hide();
+    });
 }
 </script>

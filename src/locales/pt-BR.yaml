@@ -49,7 +49,7 @@ cargoes:
     createTitle: 'Criar carga'
   delete:
     title: 'Excluir carga'
-    message: 'Tem certeza que deseja excluir a carga "{route}"?'
+    message: 'Tem certeza que deseja excluir a carga "{0}"?'
 validation:
   email: Informe um e-mail válido
   defaultRequired: Esse campo é obrigatório

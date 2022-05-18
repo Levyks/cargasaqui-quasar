@@ -14,12 +14,23 @@
       virtual-scroll
     >
       <template v-slot:top-right>
-        <TableSearch v-model="filter" />
+        <div class="row items-center">
+          <TableSearch v-model="filter" />
+          <q-btn
+            :title="$t('misc.create')"
+            rounded
+            color="primary"
+            class="q-mx-md"
+            icon="add"
+            @click="modalOpen = true"
+          />
+        </div>
       </template>
       <template v-slot:body="props">
         <InternalCargoesTableRow :props="props" />
       </template>
     </q-table>
+    <CreateOrEditCargoModal v-model="modalOpen" />
   </div>
 </template>
 
@@ -35,6 +46,7 @@ import { useFirestoreCollection } from 'composables/firebase';
 
 import TableSearch from 'components/misc/TableSearch.vue';
 import InternalCargoesTableRow from './InternalCargoesTableRow.vue';
+import CreateOrEditCargoModal from './CreateOrEditCargoModal.vue';
 
 const { t } = useI18n();
 const companyStore = useCompanyStore();
@@ -107,4 +119,6 @@ const { docs, loading } = useFirestoreCollection(
   db.companyCargoes(companyStore.company!.id),
   [orderBy('route')]
 );
+
+let modalOpen = $ref<boolean>(false);
 </script>

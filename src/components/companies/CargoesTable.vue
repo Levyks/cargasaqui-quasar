@@ -5,8 +5,8 @@
     :wrapCells="true"
     row-key="id"
     :columns="columns"
-    :rows="rows || []"
-    :loading="!rows"
+    :rows="docs"
+    :loading="loading"
     :filter="filter"
     v-model:pagination="pagination"
     :rows-per-page-options="[0]"
@@ -19,30 +19,18 @@
 </template>
 
 <script setup lang="ts">
-import {
-  onSnapshot,
-  orderBy,
-  query,
-  QueryConstraint,
-  QueryDocumentSnapshot,
-  where,
-} from '@firebase/firestore';
+import { orderBy, where } from '@firebase/firestore';
 import { useI18n } from 'vue-i18n';
 
 import { db } from 'services/firebase/db';
 import { useCompanyStore } from 'stores/company';
 import { Cargo } from 'models';
 import { useColumns, useVirtualScrollPagination } from 'composables';
-import { onUnmounted } from 'vue';
 import TableSearch from '../misc/TableSearch.vue';
+import { useFirestoreCollection } from 'src/composables/firebase';
 
 const { t } = useI18n();
 const companyStore = useCompanyStore();
-
-const constraints: QueryConstraint[] = [
-  where('status', 'in', companyStore.companyData!.public_statuses),
-  orderBy('route'),
-];
 
 const columns = useColumns<Cargo>(() => [
   {
@@ -71,14 +59,11 @@ const columns = useColumns<Cargo>(() => [
 const pagination = useVirtualScrollPagination();
 const filter = $ref('');
 
-let rows = $ref<QueryDocumentSnapshot<Cargo>[] | null>(null);
-
-const unsub = onSnapshot(
-  query(db.companyCargoes(companyStore.company!.id), ...constraints),
-  (snap) => {
-    rows = snap.docs;
-  }
+const { docs, loading } = useFirestoreCollection(
+  db.companyCargoes(companyStore.company!.id),
+  [
+    where('status', 'in', companyStore.companyData!.public_statuses),
+    orderBy('route'),
+  ]
 );
-
-onUnmounted(unsub);
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <q-tr :class="getColorClass(props.row)">
+  <q-tr :class="getColorClass(props.row)" :title="`ID: ${props.row.id}`">
     <template v-for="col in props.cols" :key="col.name">
       <q-td v-if="col.name === 'actions'" :class="col.__thClass">
         <q-btn
@@ -14,12 +14,19 @@
           :title="$t('misc.delete')"
           flat
           icon="delete"
+          @click="handleDelete"
           :disabled="loadingPrivate"
         />
       </q-td>
 
-      <q-td v-if="col.name.startsWith('p.')" :class="col.__thClass">
+      <q-td v-else-if="col.name.startsWith('p.')" :class="col.__thClass">
         <q-spinner v-if="loadingPrivate" />
+        <q-icon
+          v-else-if="!privateSnap"
+          name="error"
+          color="red"
+          size="1.5rem"
+        />
         <template v-else>{{ getPrivateFieldValue(col) }}</template>
       </q-td>
 
@@ -36,16 +43,22 @@
 <script setup lang="ts">
 import { TableBodySlotProps, TableColumnProps } from 'typings/misc';
 import { Cargo, CargoPrivate } from 'models';
-import { QueryDocumentSnapshot } from '@firebase/firestore';
+import { deleteDoc, QueryDocumentSnapshot } from '@firebase/firestore';
 import { useCompanyStore } from 'stores/company';
 import { useCargoPrivate } from 'composables/firebase';
 import CreateOrEditCargoModal from './CreateOrEditCargoModal.vue';
+import { Loading, useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
+import { useFeedback } from 'src/composables';
 
 const { props } = defineProps<{
   props: TableBodySlotProps<QueryDocumentSnapshot<Cargo>>;
 }>();
 
 const companyStore = useCompanyStore();
+const $q = useQuasar();
+const { t } = useI18n();
+const { handleFirebaseError } = useFeedback();
 
 const {
   snap: privateSnap,
@@ -68,6 +81,24 @@ const getColorClass = $computed(() => {
     return status?.data()?.qRowClass || '';
   };
 });
+
+function handleDelete() {
+  $q.dialog({
+    title: t('cargoes.delete.title'),
+    message: t('cargoes.delete.message', [props.row.data().route]),
+    ok: t('misc.delete'),
+    cancel: t('misc.cancel'),
+  }).onOk(() => {
+    Loading.show();
+    const promises = [deleteDoc(props.row.ref)];
+    if (privateSnap.value) promises.push(deleteDoc(privateSnap.value.ref));
+    Promise.all(promises)
+      .catch(handleFirebaseError)
+      .finally(() => {
+        Loading.hide();
+      });
+  });
+}
 
 let modalOpen = $ref<boolean>(false);
 </script>
